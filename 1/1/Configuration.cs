@@ -11,16 +11,28 @@ namespace _1
     class Configuration
     {
         private string FileName { get; set; }
+        ErrorList error = new ErrorList();
         public Configuration(string configFileName)
         {
             FileName = configFileName;
         }
-        public Boolean Valid { get; set; } = false;
         public string Error { get; set; }
-       
+        public static bool conValid { get; private set; }
+        public static bool ltValid { get; private set; }
+        public static bool lpValid { get; private set; }
+        public static bool lpfValid { get; private set; }
+        public static bool pmdValid { get; private set; }
+        public static bool ptValid { get; private set; }
+        public static bool prValid { get; private set; }
+        public static bool rrfValid { get; private set; }
+        public static bool tiValid { get; private set; }
+        public static bool piValid { get; private set; }
+        public static bool ciValid { get; private set; }
+
         public void Parse()
         {
-            List<String> ErrorList = new List<string>();
+            int total = 0;
+            int coefficientId = 0;
             try {
                 //Display file
                 StreamReader csvfile = new StreamReader(FileName);
@@ -43,7 +55,7 @@ namespace _1
                         }
                         else
                         {
-                            ErrorList.Add(line);
+                            error.AppendError(line);
                         }
                     }
                     //check DEFAULT-LOGFILE line pattern
@@ -52,12 +64,12 @@ namespace _1
                         string pattern = @"^DEFAULT-LOGFILE,";
                         if (Regex.IsMatch(line, pattern))
                         {
-
+                            conValid = true;
                         }
                         else
                         {
-                            ErrorList.Add(line);
-                            Error.ToString();
+                            conValid = false;
+                            error.AppendError(line);
                         }
                     }
                     //When line contain "TASKS"
@@ -66,12 +78,12 @@ namespace _1
                         string pattern = @"^LIMITS-TASKS,\d+,\d+$";
                         if (Regex.IsMatch(line, pattern))
                         {
-                            String[] item = line.Split(new char[] { ',' });
+                            ltValid = true;
                         }
                         else
                         {
-                            ErrorList.Add(line);
-                            Error = line.ToString();
+                            ltValid = false;
+                            error.AppendError(line);
                         }
                         continue;
                     }
@@ -81,12 +93,12 @@ namespace _1
                         string pattern = @"^LIMITS-PROCESSORS,\d+,\d+$";
                         if (Regex.IsMatch(line, pattern))
                         {
-                            Console.WriteLine("format is correct");
+                            lpValid = true;
                         }
                         else
                         {
-                            ErrorList.Add(line);
-                            Console.WriteLine("format is INcorrect");
+                            lpValid = false;
+                            error.AppendError(line);
                         }
                         continue;
                     }
@@ -96,11 +108,12 @@ namespace _1
                         string pattern = @"^LIMITS-PROCESSOR-FREQUENCIES,\d+,\d+$";
                         if (Regex.IsMatch(line, pattern))
                         {
-                            Console.WriteLine("format is correct");
+                            lpfValid = true;
                         }
                         else
                         {
-                            ErrorList.Add(line);
+                            lpfValid = false;
+                            error.AppendError(line);
                         }
                         continue;
                     }
@@ -110,11 +123,12 @@ namespace _1
                         string pattern = @"^PROGRAM-MAXIMUM-DURATION,\d+$";
                         if (Regex.IsMatch(line, pattern))
                         {
-                            Console.WriteLine("format is correct");
+                            pmdValid = true;
                         }
                         else
                         {
-                            ErrorList.Add(line);
+                            pmdValid = false;
+                            error.AppendError(line);
                         }
                     }
                     if (line.StartsWith("PROGRAM-TASKS"))
@@ -122,11 +136,12 @@ namespace _1
                         string pattern = @"^PROGRAM-TASKS,\d+$";
                         if (Regex.IsMatch(line, pattern))
                         {
-                            Console.WriteLine("format is correct");
+                            ptValid = true;
                         }
                         else
                         {
-                            ErrorList.Add(line);
+                            ptValid = false;
+                            error.AppendError(line);
                         }
                     }
                     if (line.StartsWith("PROGRAM-PROCESSORS"))
@@ -134,11 +149,18 @@ namespace _1
                         string pattern = @"^PROGRAM-PROCESSORS,\d+$";
                         if (Regex.IsMatch(line, pattern))
                         {
-                            Console.WriteLine("format is correct");
+                            String[] item = line.Split(new char[] { ',' });
+                            total = Convert.ToInt32(item[1]);
+                           if(coefficientId == total)
+                            {
+                                prValid = true;
+                                continue;
+                            }
                         }
                         else
                         {
-                            ErrorList.Add(line);
+                            prValid = false;
+                            error.AppendError(line);
                         }
                     }
                     if (line.StartsWith("RUNTIME-REFERENCE-FREQUENCY"))
@@ -146,11 +168,12 @@ namespace _1
                         string pattern = @"^RUNTIME-REFERENCE-FREQUENCY,\d+$";
                         if (Regex.IsMatch(line, pattern))
                         {
-                            Console.WriteLine("format is correct");
+                            rrfValid = true;
                         }
                         else
                         {
-                            ErrorList.Add(line);
+                            rrfValid = false;
+                            error.AppendError(line);
                         }
                     }
                     if (line.StartsWith("TASK-ID"))
@@ -158,15 +181,16 @@ namespace _1
                         string pattern = @"^TASK-ID,RUNTIME$";
                         if (Regex.IsMatch(line, pattern))
                         {
-                            String[] item = line.Split(new char[] { ',' });
+                            tiValid = true;
 
                         }
                         else
                         {
-                            ErrorList.Add(line);
+                            tiValid = false;
+                            error.AppendError(line);
                         }
                     }
-                    //如何检查重复的task任务，或者如何可以将他们导出来比较
+                    //***如何检查重复的task任务，或者如何可以将他们导出来比较
                     if (line.StartsWith("1")||line.StartsWith("2")|| line.StartsWith("3")|| line.StartsWith("4")|| line.StartsWith("5")|| line.StartsWith("6")|| line.StartsWith("7") || line.StartsWith("8") || line.StartsWith("9"))
                     {
                         String[] item = line.Split(new char[] { ',' });
@@ -180,11 +204,12 @@ namespace _1
                         string pattern = @"^PROCESSOR-ID,FREQUENCY$";
                         if (Regex.IsMatch(line, pattern))
                         {
-                            Console.WriteLine("format is correct");
+                            piValid = true;
                         }
                         else
                         {
-                            ErrorList.Add(line);
+                            piValid = false;
+                            error.AppendError(line);
                         }
                     }
                     if (line.StartsWith("COEFFICIENT-ID"))
@@ -192,11 +217,23 @@ namespace _1
                         string pattern = @"^COEFFICIENT-ID,VALUE$";
                         if (Regex.IsMatch(line, pattern))
                         {
-                            Console.WriteLine("format is correct");
+                            String[] item = line.Split(new char[] { ',' });
+                            String IdAmount = item[1];
+                            coefficientId++;
+                            if (coefficientId == total)
+                            {
+                                ciValid = true;
+                            }
+                            else
+                            {
+                                ciValid = false;
+                                error.AppendError(line);
+                            }
                         }
                         else
                         {
-                            ErrorList.Add(line);
+                            ciValid = false;
+                            error.AppendError(line);
                         }
                     }
                     Console.WriteLine(line);
@@ -208,5 +245,18 @@ namespace _1
                 Console.WriteLine("Wrong file");
             }
             }
+
+       
+        internal static bool IsValid()
+        {
+            if (conValid == true && ltValid == true && lpValid == true && lpfValid == true && pmdValid == true && ptValid == true && prValid == true && rrfValid == true && tiValid == true && piValid == true && ciValid == true)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
 }

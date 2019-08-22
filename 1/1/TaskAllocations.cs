@@ -14,16 +14,20 @@ namespace _1
         private string FileName { get; set; }
         public string ConfigFilename { get; set; }
         ErrorList error = new ErrorList();
-        //Valid documantation
-        public Boolean Valid { get; set; } = false;
+        
+        
         //errorlist
         public string Error { get; set; }
-        List<String> errorList = new List<string>();
+        public static bool AidValid { get; private set; }
+        public static bool allocationValid { get; private set; }
+        public static bool processorValid { get; private set; }
+        public static bool TasksValid { get; private set; }
+        public static bool CommentValid { get; private set; }
+
         public TaskAllocations(string TanFileName)
         {
             FileName = TanFileName;
         }
-
         public void Parse()
         {
             int AllocationId = 0;
@@ -42,7 +46,6 @@ namespace _1
                 //skip blank line
                 if (line.Length == 0)
                 {
-                    // Console.WriteLine("Blank line found");
                     continue;
                 }
                 //skip comment line
@@ -51,11 +54,12 @@ namespace _1
                     if (line.StartsWith("//"))
                     {
                         //Console.WriteLine("Comment line found");//check if the line start with"//"
-                        continue;
+                        CommentValid = true;
                     }
                     else
                     {
                         error.AppendError(line);
+                        CommentValid = false;
                     }
                     continue;
                 }
@@ -79,11 +83,12 @@ namespace _1
                     {
                         String[] item = line.Split(new char[] { ',' });
                         task = Convert.ToInt32(item[1]);
-                        continue;
+                        TasksValid = true;
                     }
                     else
                     {
                         error.AppendError(line);
+                        TasksValid = false;
                     }
                     continue;
                 }
@@ -95,56 +100,60 @@ namespace _1
                     {
                         String[] item = line.Split(new char[] { ',' });
                         processor = Convert.ToInt32(item[1]);
-                        continue;
+                        processorValid = true;
                     }
                     else
                     {
-                        
+                        error.AppendError(line);
+                        processorValid = false;
                     }
                     continue;
                 }
                 //When line contain "ALLOCATIONS"
-                if (line.StartsWith("ALLOCATIONS"))
-                {
-                    string pattern = @"^ALLOCATIONS,\d$";
-                    if (Regex.IsMatch(line, pattern))
-                    {
-                        String[] item = line.Split(new char[] { ',' });
-                        total = Convert.ToInt32(item[1]);
-                        if (AllocationId == total)
-                        {
-                            continue;
-                        }
-                    }
-                    else
-                    {
-                        
-                    }
-                    continue;
-                }
+                //if (line.StartsWith("ALLOCATIONS"))
+                //{
+                //    string pattern = @"^ALLOCATIONS,\d$";
+                //    if (Regex.IsMatch(line, pattern))
+                //    {
+                //        String[] item = line.Split(new char[] { ',' });
+                //        total = Convert.ToInt32(item[1]);
+                //        if (AllocationId == total)
+                //        {
+                //            allocationValid = true;
+                //        }
+                //    }
+                //    else
+                //    {
+                //        error.AppendError(line);
+                //        allocationValid = false;
+                //    }
+                //    continue;
+                //}
                 //when line contain "ALLOCATION-ID"
-                if (line.StartsWith("ALLOCATION-ID"))
-                {
-                    string pattern = @"^ALLOCATION-ID,\d$";
-                    if (Regex.IsMatch(line, pattern))
-                    {
-                        String[] item = line.Split(new char[] { ',' });
-                        String IdAmount = item[1];
-                        AllocationId++;
-                        if (AllocationId == total)
-                        {
-                            continue;
-                        }
-                        else
-                        {
-                           // Console.WriteLine("allocation not match ");
-                        }
-                    }
-                    else
-                    {
-
-                    }
-                }
+                //if (line.StartsWith("ALLOCATION-ID"))
+                //{
+                //    string pattern = @"^ALLOCATION-ID,\d$";
+                //    if (Regex.IsMatch(line, pattern))
+                //    {
+                //        String[] item = line.Split(new char[] { ',' });
+                //        String IdAmount = item[1];
+                //        AllocationId++;
+                //        if (AllocationId == total)
+                //        {
+                //            AidValid = true;
+                //        }
+                //        else
+                //        {
+                //            error.AppendError(line);
+                //            AidValid = false;
+                //        }
+                //    }
+                //    else
+                //    {
+                //        error.AppendError(line);
+                //    }
+                //}
+                //check 0 and 1
                 if (line.StartsWith("0") || line.StartsWith("1"))
                 {
                     String[] item = line.Split(new char[] { ',' });
@@ -157,7 +166,10 @@ namespace _1
                             allocation++;
                             if (allocation == task)
                             {
-                                continue;
+                                if (line.EndsWith("ALLOCATION-ID"))
+                                {
+                                    
+                                }
                             }
                         }
                     }
@@ -166,6 +178,20 @@ namespace _1
             }
             tanfile.Close();
         }
+
+        
+        internal static bool IsValid()
+        {
+            if(CommentValid == true &&  processorValid == true && TasksValid == true)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         public void Errors(string errors)
         {
             StreamWriter errorfile = new StreamWriter(errors);

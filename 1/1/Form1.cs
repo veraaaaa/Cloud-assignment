@@ -50,8 +50,23 @@ namespace _1
             configuration = new Configuration(taskAllocations.ConfigFilename);
             configuration.Parse();//Display assicoate csvfile calling Parse class
             TaskAllocations allocations = new TaskAllocations(ofd.FileName);
-            
-
+            if(TaskAllocations.IsValid() == true)
+            {
+                textBox1.AppendText("Current opining  TAN file is valid" +"\r\n");
+            }
+            else
+            {
+                textBox1.AppendText("Current opining TAN file is invalid" + "\r\n");
+            }
+            Configuration configurations = new Configuration(taskAllocations.ConfigFilename);
+            if(Configuration.IsValid() == true)
+            {
+                textBox1.AppendText("Current opining CSV file is valid" + "\r\n");
+            }
+            else
+            {
+                textBox1.AppendText("Current opining CSV file is invalid" + "\r\n");
+            }
         }
         //allocation
         private void allocationsToolStripMenuItem_Click(object sender, EventArgs e)
