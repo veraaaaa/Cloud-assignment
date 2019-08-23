@@ -153,9 +153,9 @@ namespace _1
                             total = Convert.ToInt32(item[1]);
                            if(coefficientId == total)
                             {
-                                prValid = true;
                                 continue;
                             }
+                            prValid = true;
                         }
                         else
                         {
@@ -193,10 +193,9 @@ namespace _1
                     //***如何检查重复的task任务，或者如何可以将他们导出来比较
                     if (line.StartsWith("1")||line.StartsWith("2")|| line.StartsWith("3")|| line.StartsWith("4")|| line.StartsWith("5")|| line.StartsWith("6")|| line.StartsWith("7") || line.StartsWith("8") || line.StartsWith("9"))
                     {
-                        String[] item = line.Split(new char[] { ',' });
+                        String[] item = line.Split(new char[] { ',' });//seperate the data
 
-                    }
-                    {
+                       
 
                     }
                     if (line.StartsWith("PROCESSOR-ID"))
@@ -222,13 +221,14 @@ namespace _1
                             coefficientId++;
                             if (coefficientId == total)
                             {
-                                ciValid = true;
+                                continue;
                             }
                             else
                             {
                                 ciValid = false;
                                 error.AppendError(line);
                             }
+                            ciValid = true;
                         }
                         else
                         {
@@ -246,7 +246,7 @@ namespace _1
             }
             }
 
-       
+       //determine wether this CSVfile is valid or invalid
         internal static bool IsValid()
         {
             if (conValid == true && ltValid == true && lpValid == true && lpfValid == true && pmdValid == true && ptValid == true && prValid == true && rrfValid == true && tiValid == true && piValid == true && ciValid == true)

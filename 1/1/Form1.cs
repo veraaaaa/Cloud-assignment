@@ -71,7 +71,11 @@ namespace _1
         //allocation
         private void allocationsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            allocationsToolStripMenuItem.Enabled = false;
+            if (Configuration.IsValid() == true && TaskAllocations.IsValid()== true)
+            {
+                allocationsToolStripMenuItem.Enabled = true;
+            }
+            
         }
         //errorList
         private void errorListToolStripMenuItem_Click(object sender, EventArgs e)

@@ -89,8 +89,9 @@
             // 
             // allocationsToolStripMenuItem
             // 
+            this.allocationsToolStripMenuItem.Enabled = false;
             this.allocationsToolStripMenuItem.Name = "allocationsToolStripMenuItem";
-            this.allocationsToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+            this.allocationsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.allocationsToolStripMenuItem.Text = "Allocations";
             this.allocationsToolStripMenuItem.Click += new System.EventHandler(this.allocationsToolStripMenuItem_Click);
             // 
@@ -120,7 +121,7 @@
             // aboutAllocationsToolStripMenuItem
             // 
             this.aboutAllocationsToolStripMenuItem.Name = "aboutAllocationsToolStripMenuItem";
-            this.aboutAllocationsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.aboutAllocationsToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.aboutAllocationsToolStripMenuItem.Text = "About";
             // 
             // textBox1
